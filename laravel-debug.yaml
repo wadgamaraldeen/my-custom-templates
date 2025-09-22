@@ -1,0 +1,35 @@
+id: laravel-debug
+
+info:
+  name: Laravel Debug/Logs Exposure
+  author: wadgamer10
+  severity: low
+  description: Detects exposed Laravel .env or logs files
+  tags: laravel,debug,logs,env
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+      - "{{BaseURL}}/"
+      - "{{BaseURL}}/.env"
+      - "{{BaseURL}}/storage/logs/laravel.log"
+
+    matchers-condition: or
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: word
+        words:
+          - "APP_NAME="
+          - "APP_KEY="
+          - "DB_PASSWORD="
+          - "local.ERROR:"
+        condition: or
+
+      - type: word
+        part: header
+        words:
+          - "text/plain"

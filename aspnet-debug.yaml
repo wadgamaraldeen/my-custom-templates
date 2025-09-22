@@ -1,0 +1,34 @@
+id: aspnet-debug
+
+info:
+  name: ASP.NET Debug or Error Logging Exposure
+  author: wadgamer10
+  severity: low
+  description: Detects debug trace or ELMAH logging endpoints
+  tags: aspnet,dotnet,debug,elmah
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+      - "{{BaseURL}}"
+      - "{{BaseURL}}/elmah.axd"
+      - "{{BaseURL}}/trace.axd"
+
+    matchers-condition: or
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: word
+        words:
+          - "<title>ELMAH"
+          - "Error Log for"
+          - "Application Trace"
+        condition: or
+
+      - type: word
+        part: header
+        words:
+          - "text/html"

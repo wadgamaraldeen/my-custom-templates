@@ -1,0 +1,38 @@
+id: nodejs-debug
+
+info:
+  name: Node.js/Express Debug Info Exposure
+  author: wadgamer10
+  severity: low
+  description: Detects exposed debug/info endpoints in Node.js/Express applications
+  tags: nodejs,express,debug,info
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+      - "{{BaseURL}}/"
+      - "{{BaseURL}}/debug"
+      - "{{BaseURL}}/info"
+      - "{{BaseURL}}/status"
+      - "{{BaseURL}}/health"
+
+    matchers-condition: or
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: word
+        words:
+          - '"uptime":'
+          - '"memoryUsage":'
+          - '"pid":'
+          - '"version":'
+          - 'express'
+        condition: or
+
+      - type: word
+        part: header
+        words:
+          - "application/json"

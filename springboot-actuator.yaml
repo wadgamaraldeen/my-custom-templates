@@ -1,0 +1,37 @@
+id: springboot-actuator
+
+info:
+  name: Spring Boot Actuator Exposure
+  author: wadgamer10
+  severity: low
+  description: Detects exposed Spring Boot actuator endpoints
+  tags: springboot,actuator,debug
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+      - "{{BaseURL}}/"
+      - "{{BaseURL}}/actuator"
+      - "{{BaseURL}}/actuator/env"
+      - "{{BaseURL}}/actuator/metrics"
+      - "{{BaseURL}}/actuator/heapdump"
+
+    matchers-condition: or
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: word
+        words:
+          - "\"_links\""
+          - "\"status\""
+          - "\"systemProperties\""
+          - "\"metrics\""
+        condition: or
+
+      - type: word
+        part: header
+        words:
+          - "application/json"

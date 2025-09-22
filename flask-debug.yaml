@@ -1,0 +1,36 @@
+id: flask-debug
+
+info:
+  name: Flask Debug Console Exposure
+  author: wadgamer10
+  severity: medium
+  description: Detects Flask Werkzeug debugger or sensitive env output
+  tags: flask,debug,werkzeug
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+      - "{{BaseURL}}"
+      - "{{BaseURL}}/console"
+      - "{{BaseURL}}/debug"
+      - "{{BaseURL}}/env"
+
+    matchers-condition: or
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: word
+        words:
+          - "Werkzeug Debugger"
+          - "PIN:"
+          - "Environment:"
+          - "Flask"
+        condition: or
+
+      - type: word
+        part: header
+        words:
+          - "text/html"

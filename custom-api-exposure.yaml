@@ -1,0 +1,40 @@
+id: custom-api-exposure
+
+info:
+  name: Sensitive API Endpoint Exposure
+  author: security-researcher
+  severity: high
+  description: Detects exposed API endpoints with sensitive information
+  reference:
+    - https://owasp.org/www-project-api-security/
+  classification:
+    cvss-metrics: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N
+    cvss-score: 7.5
+    cwe-id: CWE-200
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/api/v1/users"
+      - "{{BaseURL}}/api/users"
+      - "{{BaseURL}}/v1/users"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - '"password"'
+          - '"email"'
+          - '"token"'
+        condition: or
+
+      - type: status
+        status:
+          - 200
+
+    extractors:
+      - type: regex
+        regex:
+          - '"email":"([^"]+)"'
+          - '"password":"([^"]+)"'
+        group: 1
